@@ -1,3 +1,6 @@
+
+
+
 from flask import Flask, request, jsonify, send_file 
 import qrcode
 from io import BytesIO
@@ -34,7 +37,35 @@ def get_db_connection():
 
 from datetime import datetime, timedelta
 
+from flask import render_template
 
+@app.route('/')
+def principal():
+    return render_template('principal.html')
+
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
+@app.route('/usuario')
+def usuario():
+    return render_template('usuario.html')
+
+@app.route('/sesion_guardia')
+def sesion_guardia():
+    return render_template('sesion_guardia.html')
+
+@app.route('/guardia')
+def guardia():
+    return render_template('guardia.html')
+
+@app.route('/sesion_administrador')
+def sesion_administrador():
+    return render_template('sesion_administrador.html')
+
+@app.route('/administrador')
+def administrador():
+    return render_template('administrador.html')
 
 
 # User authentication and QR generation
