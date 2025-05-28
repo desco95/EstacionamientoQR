@@ -4,18 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sesión Administrador</title>
-    <link rel="stylesheet" href="../static/styles_sesion_administrador.css">
+    <link rel="stylesheet" href="/static/styles_sesion_administrador.css">
 </head>
 <body>
     <div class="admin-session-container">
         <div class="logo-section">
-            <img src="../static/LOGO INICIO SESION.png" alt="Logo Inicio Sesión">
+            <img src="/static/LOGO INICIO SESION.png" alt="Logo Inicio Sesión">
         </div>
 
         <div class="form-section">
             <div class="header">
                 <div class="header-title">INSTITUTO TECNOLÓGICO<br>DE LEÓN</div>
-                <img src="../static/LOGO ITL.png" alt="Logo ITL" onclick="location.href='principal.html'">
+                <img src="/static/LOGO ITL.png" alt="Logo ITL" onclick="location.href='/'">
             </div>
 
             <div class="subtitle">ESTACIONAMIENTO CAMPUS I</div>
@@ -35,7 +35,7 @@
                 <div class="button-row">
                     <div></div>
                     <div><button type="submit" class="enter-button">Entrar</button></div>
-                    <div><button type="button" class="back-button" onclick="location.href='principal.html'">Volver al inicio</button></div>
+                    <div><button type="button" class="back-button" onclick="location.href='/'">Volver al inicio</button></div>
                 </div>
             </form>
             
@@ -52,7 +52,7 @@
             const errorElement = document.getElementById('error-message');
 
             try {
-                const response = await fetch("http://127.0.0.1:5000/api/admin/login", {
+                const response = await fetch("/api/admin/login", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -70,7 +70,7 @@
                     localStorage.setItem('admin_role', data.role);
                     localStorage.setItem('admin_username', usuario);
 
-                    window.location.href = 'administrador.html';
+                    window.location.href = '/administrador';
                 } else {
                     errorElement.textContent = data.error || 'Credenciales incorrectas';
                 }
