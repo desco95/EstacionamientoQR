@@ -1,6 +1,3 @@
-
-
-
 from flask import Flask, request, jsonify, send_file 
 import qrcode
 from io import BytesIO
@@ -14,7 +11,8 @@ from flask_cors import CORS
 from apscheduler.schedulers.background import BackgroundScheduler
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import date, time, datetime
-
+from datetime import datetime, timedelta
+from flask import render_template
 
 app = Flask(__name__)
 CORS(app)
@@ -35,9 +33,7 @@ def get_db_connection():
     )
     return conn
 
-from datetime import datetime, timedelta
 
-from flask import render_template
 
 @app.route('/')
 def principal():
