@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 2) Si falta cualquiera, redirige a principal.html
   if (!token || !userType) {
     alert('No se recibió información de sesión. Volviendo a principal.');
-    window.location.href = 'principal.html';
+    window.location.href = '/';
     return;
   }
 
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
   firebase.auth().onAuthStateChanged(user => {
     if (!user) {
       alert('Sesión expirada. Volviendo a principal.');
-      window.location.href = 'principal.html';
+      window.location.href = '/';
       return;
     }
 
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     .addEventListener('click', () => {
       firebase.auth().signOut()
         .then(() => {
-          window.location.href = 'principal.html';
+          window.location.href = '/';
         })
         .catch(err => {
           console.error('Error al cerrar sesión:', err);
@@ -80,7 +80,7 @@ function renderUserInfo(email, userType) {
  */
 async function showQRCode(token, userType) {
   console.log('Solicitando QR al backend con token y type:', token, userType);
-  const res = await fetch('http://127.0.0.1:5000/api/generate_qr', {
+  const res = await fetch('/api/generate_qr', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ token, type: userType })
@@ -109,7 +109,7 @@ async function showQRCode(token, userType) {
  */
 async function downloadQRCode(token, userType) {
   console.log('Descargando QR con token y type:', token, userType);
-  const res = await fetch('http://127.0.0.1:5000/api/generate_qr', {
+  const res = await fetch('/api/generate_qr', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ token, type: userType })
