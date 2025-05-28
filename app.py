@@ -19,7 +19,7 @@ CORS(app)
 load_dotenv()
 
 # Firebase configuration
-cred = credentials.Certificate("Estacionamiento/contra/firebase-service-account.json")
+cred = credentials.Certificate("firebase-service-account.json")
 firebase_admin.initialize_app(cred)
 
 # Database connection
