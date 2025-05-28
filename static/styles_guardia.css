@@ -1,0 +1,271 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    min-height: 100vh;
+    height: 100%;
+}
+
+body {
+    position: relative;
+    min-height: 100vh;
+}
+
+/* --------- CONTENEDOR --------- */
+.guard-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ------ HEADER ------ */
+.guard-container .header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 0;
+    padding: 0;
+    background: none;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 10;
+}
+
+/* LOGO USUARIO: pegado a la izquierda y arriba */
+.guard-container .header img:first-child {
+    display: block;
+    height: 88px;
+    width: auto;
+    margin: 0;
+    padding: 0;
+    object-fit: contain;
+    background: transparent;
+    border: none;
+}
+
+/* LOGO ITL-QR1: derecha, con margen derecho pequeño */
+.guard-container .header img:last-child {
+    display: block;
+    height: 86px;
+    width: auto;
+    margin-right: 24px;
+    margin-top: 4px;
+    background: transparent;
+    border: none;
+}
+
+/* MÁS GRANDES EN ESCRITORIO */
+@media (min-width: 900px) {
+    .guard-container .header img:first-child { height: 110px; }
+    .guard-container .header img:last-child { height: 105px; margin-right: 38px;}
+}
+/* AJUSTA EN CELULAR */
+@media (max-width: 600px) {
+    .guard-container .header img:first-child { height: 52px;}
+    .guard-container .header img:last-child { height: 40px; margin-right: 6px; }
+}
+
+/* -------- CONTENIDO -------- */
+.main-content {
+    padding: 23px 8px 30px 8px;
+    text-align: center;
+    box-sizing: border-box;
+    flex: 1 1 auto;
+}
+
+.main-content h1 {
+    font-size: 23px;
+    color: #011151;
+    margin: 15px 0 18px 0;
+}
+
+/* ---------- CARRUSEL USUARIOS ---------- */
+.carousel-users {
+    margin-bottom: 1.3rem;
+}
+.carousel-users .slides {
+    display: flex;
+    transition: transform 0.3s ease;
+    width: 100%;
+}
+.carousel-users .slide {
+    flex: 0 0 100%;
+    box-sizing: border-box;
+    padding: 9px 2px 9px 2px;
+    min-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.carousel-users .nav-arrow {
+    position: absolute;
+    top: 54%;
+    font-size: 2rem;
+    background: #011151;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    cursor: pointer;
+    z-index: 2;
+    opacity: 0.92;
+    transition: background 0.18s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.carousel-users .nav-arrow:hover { background: #00bf63; }
+#prev-users { left: 10px; }
+#next-users { right: 10px; }
+.qr-box {
+    background-color: #011151;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    min-width: 140px;
+    max-width: 340px;
+    margin: 10px auto;
+    font-size: 1rem;
+    word-break: break-word;
+}
+#camera-entry, #camera-exit {
+    margin-top: 12px;
+}
+#qr-video-entry, #qr-video-exit {
+    border: 2px solid #011151;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 330px;
+    height: auto;
+}
+@media (max-width: 600px) {
+    .carousel-users .slide { padding: 5px 0px 8px 0px;}
+    .qr-box { padding: 10px; min-width: 90px; font-size: 0.95rem;}
+    #qr-video-entry, #qr-video-exit { max-width: 99vw; }
+    .carousel-users .nav-arrow { width: 28px; height: 28px; font-size: 1.4rem;}
+}
+
+/* ---------- CARRUSEL VISITANTES ---------- */
+.carousel-visitors {
+    position: relative;
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto 20px auto;
+    overflow: hidden;
+    background-color: #f5f5f5;
+    border-radius: 13px;
+    box-shadow: 0 2px 8px rgba(36,17,81,0.09);
+    padding: 10px 4px 10px 4px;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    transition: all 0.14s;
+}
+.carousel-visitors .slides {
+    display: flex;
+    transition: transform 0.35s cubic-bezier(.47,1.64,.41,.8);
+    width: 100%;
+}
+.carousel-visitors .slide {
+    flex: 0 0 100%;
+    box-sizing: border-box;
+    padding: 5px 2px 8px 2px;
+    min-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.carousel-visitors .nav-arrow {
+    position: absolute;
+    top: 54%;
+    font-size: 1.4rem;
+    background: #011151;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    z-index: 2;
+    opacity: 0.95;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.carousel-visitors .nav-arrow:hover { background: #00bf63; }
+#prev-visitors { left: 5px; }
+#next-visitors { right: 5px; }
+.carousel-visitors input[type="text"] {
+    width: 96%;
+    max-width: 180px;
+    margin: 6px 0;
+    padding: 7px 8px;
+    border-radius: 6px;
+    border: 1.2px solid #ccc;
+    font-size: 13.3px;
+    background: #fff;
+}
+.carousel-visitors button { margin-top: 7px; }
+#visitor-table {
+    width: 100%;
+    margin: 0.3rem 0 0 0;
+    font-size: 0.87rem;
+    background: #fff;
+    border-radius: 7px;
+    overflow-x: auto;
+    box-shadow: 0 1px 5px rgba(36,17,81,0.06);
+}
+#visitor-table th, #visitor-table td {
+    border: 1px solid #dedede;
+    padding: 0.16rem 0.14rem;
+    text-align: center;
+    font-size: 10.8px;
+}
+#visitor-table th {
+    background: #e8eafc;
+    color: #011151;
+    font-weight: 600;
+}
+#visitor-table td {
+    background: #f5f7fa;
+}
+@media (max-width: 600px) {
+    .carousel-visitors { max-width: 98vw; min-height: 77px; padding: 2px 0 6px 0;}
+    .carousel-visitors .slide { padding: 1px 0px 4px 0px;}
+    #visitor-table th, #visitor-table td { font-size: 8.7px; padding: 0.06rem 0.04rem; }
+}
+
+/* ----------- BOTONES GENERALES ----------- */
+.button-blue, .button-green, .button-red {
+    padding: 8px 13px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+}
+.button-blue { background-color: #011151; color: white; margin: 10px 0; }
+.button-green { background-color: #00bf63; color: white; margin-top: 7px; }
+.button-red { background-color: #e20a19; color: white; margin-top: 5px; }
+
+/* ----------- FOOTER RECTÁNGULO AZUL ----------- */
+.footer {
+    width: 100vw;
+    height: 30px;
+    background: #011151;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    margin-top: auto;
+    bottom: 0;
+}
+
+
+
+

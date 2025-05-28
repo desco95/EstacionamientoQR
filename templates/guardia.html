@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acceso Guardia</title>
+  <link rel="stylesheet" href="../static/styles_guardia.css">
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+  <style>
+    .carousel      { position: relative; width: 100%; max-width: 700px; margin: auto; overflow: hidden; }
+    .slides        { display: flex; transition: transform 0.3s ease; }
+    .slide         { flex: 0 0 100%; box-sizing: border-box; padding: 1rem; }
+    .nav-arrow     { position: absolute; top: 50%; transform: translateY(-50%); font-size: 2rem; background: rgba(255,255,255,0.7); border: none; cursor: pointer; z-index:2;}
+    .carousel-users { margin-bottom: 2rem;}
+    .carousel-visitors { margin-bottom: 2rem;}
+    .carousel-users .nav-arrow { left: 0.5rem; right: unset; }
+    .carousel-users #next-users { right: 0.5rem; left: unset;}
+    .carousel-visitors .nav-arrow { left: 0.5rem; right: unset;}
+    .carousel-visitors #next-visitors { right: 0.5rem; left: unset;}
+    table { width: 100%; border-collapse: collapse;}
+    th, td { border: 1px solid #ccc; padding: 0.25rem 0.5rem;}
+  </style>
+</head>
+<body>
+  <div class="guard-container">
+    <div class="header">
+      <img src="../static/LOGO USUARIO.png" alt="Logo Usuario">
+      <img src="../static/LOGO ITL-QR1.png" alt="Logo ITL QR">
+    </div>
+    <div class="main-content">
+      <h1>Acceso por Código QR</h1>
+
+      <!-- Carrusel USUARIOS (NO TOCAR) -->
+      <div class="carousel carousel-users">
+        <button id="prev-users" class="nav-arrow">&lt;</button>
+        <div class="slides" id="slides-users">
+          <!-- Slide 1: Entrada QR -->
+          <div class="slide" id="slide-entry">
+            <h2>Escanear Para Entrar</h2>
+            <div id="approval-status-entry" class="qr-box">ESPERANDO...</div>
+            <div id="camera-entry" style="display:none;">
+              <video id="qr-video-entry" width="300" height="200"></video>
+              <button id="stop-camera-entry" class="button-red">Detener</button>
+            </div>
+            <button id="scan-entry" class="button-blue">Iniciar Cámara</button>
+          </div>
+          <!-- Slide 2: Salida QR -->
+          <div class="slide" id="slide-exit">
+            <h2>Escanear Para Salir</h2>
+            <div id="approval-status-exit" class="qr-box">ESPERANDO...</div>
+            <div id="camera-exit" style="display:none;">
+              <video id="qr-video-exit" width="300" height="200"></video>
+              <button id="stop-camera-exit" class="button-red">Detener</button>
+            </div>
+            <button id="scan-exit" class="button-blue">Iniciar Cámara</button>
+          </div>
+        </div>
+        <button id="next-users" class="nav-arrow">&gt;</button>
+      </div>
+
+      <h1>Acceso para Visitantes</h1>
+
+      <!-- Carrusel VISITANTES (PUEDES MODIFICAR LIBREMENTE) -->
+      <div class="carousel carousel-visitors">
+        <button id="prev-visitors" class="nav-arrow">&lt;</button>
+        <div class="slides" id="slides-visitors" style="width: 300%">
+          <!-- Slide 1: Registrar visitante -->
+          <div class="slide" id="slide-visitor-entry">
+            <h2>Registrar Visitante</h2>
+            <input type="text" id="visitor-name" placeholder="Nombre">
+            <input type="text" id="visitor-reason" placeholder="Motivo">
+            <input type="text" id="visitor-plate" placeholder="Placa (opcional)">
+            <button id="register-visitor" class="button-green">Registrar</button>
+          </div>
+          <!-- Slide 2: Salida visitante -->
+          <div class="slide" id="slide-visitor-exit">
+            <h2>Salida de Visitante</h2>
+            <input type="text" id="exit-visitor-id" placeholder="ID Visitante">
+            <input type="text" id="exit-visitor-plate" placeholder="Placa">
+            <button id="exit-visitor-btn" class="button-blue">Registrar Salida</button>
+            <div id="exit-visitor-result"></div>
+          </div>
+          <!-- Slide 3: Tabla visitantes del día -->
+          <div class="slide" id="slide-visitor-table">
+            <h2>Visitantes de Hoy</h2>
+            <button id="refresh-visitor-table" class="button-blue">Actualizar</button>
+            <table id="visitor-table">
+              <thead>
+                <tr>
+                  <th>ID</th><th>Nombre</th><th>Motivo</th><th>Placa</th><th>Entrada</th><th>Salida</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+        <button id="next-visitors" class="nav-arrow">&gt;</button>
+      </div>
+
+      <button onclick="location.href='principal.html'" class="button-blue">Volver a inicio</button>
+    </div>
+  </div>
+  <script src="guardia.js"></script>
+</body>
+</html>
+

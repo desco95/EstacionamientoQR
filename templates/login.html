@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Iniciar Sesión</title>
+  <link rel="stylesheet" href="../static/styles_login.css">
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="firebase-config.js"></script>
+</head>
+<body>
+  <div class="login-session-container">
+    <!-- Logo fuera del formulario -->
+    <div class="logo-section">
+      <img src="../static/LOGO INICIO SESION.png" alt="Logo Inicio Sesión">
+    </div>
+
+    <!-- Caja blanca con el formulario -->
+    <div class="form-section">
+      <div class="header">
+        <div class="header-title">
+          INSTITUTO TECNOLÓGICO<br>DE LEÓN
+        </div>
+        <img
+          src="../static/LOGO ITL.png"
+          alt="Logo ITL"
+          onclick="location.href='principal.html'">
+      </div>
+
+      <div class="subtitle">ESTACIONAMIENTO CAMPUS I</div>
+      <div class="admin-access">
+        Inicio de sesión para <span id="type-display">Estudiante</span>
+      </div>
+<!--
+      <form id="login-form">
+        <div class="form-group">
+          <label for="email">Correo Institucional</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="usuario@leon.tecnm.mx"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Ingrese tu contraseña"
+            required>
+        </div>
+
+        <div class="button-row">
+          
+          <button type="submit" class="enter-button">
+            Iniciar Sesión
+          </button>
+          <button type="button" id="register-btn" class="back-button">
+            Registrarse
+          </button>
+        </div>
+      </form>
+ -->
+      <div class="social-row">
+        <button type="button" id="google-login-btn" class="google-button">
+          <img
+            src="https://developers.google.com/identity/images/g-logo.png"
+            alt="Google Logo"
+            style="width:20px; vertical-align:middle; margin-right:8px;">
+          Ingresar con Google
+        </button>
+      
+        <button type="button" id="google-logout-btn" class="logout-button">
+          Cerrar sesión de Google
+        </button>
+        
+      </div>
+
+      <div class="back-row">
+        <button
+          type="button"
+          class="back-button"
+          onclick="location.href='principal.html'">
+          Volver al inicio
+        </button>
+      </div>
+
+      <div id="error-message" class="error-message"></div>
+    </div>
+  </div>
+
+<script>
+  // 0) Redirigir si no viene 'type' en la URL
+  (function() {
+    const params = new URLSearchParams(window.location.search);
+    if (!params.get('type')) {
+      window.location.href = 'principal.html';
+    }
+  })();
+
+  // 1. Detectar tipo desde principal.html
+  const urlParams = new URLSearchParams(window.location.search);
+  const userType = urlParams.get('type'); // 'student' | 'teacher' | 'admin'
+  const typeDisplay = document.getElementById('type-display');
+  if (userType === 'student') {
+    typeDisplay.textContent = 'Estudiante';
+  } else if (userType === 'teacher') {
+    typeDisplay.textContent = 'Docente';
+  } else if (userType === 'admin') {
+    typeDisplay.textContent = 'Personal Administrativo';
+  }
+
+  const errorEl = document.getElementById('error-message');
+
+  // 2. Validación de formato de correo y restricciones por sección
+  function validarCorreo(email) {
+    const partes = email.split('@');
+    if (partes.length !== 2 || partes[1] !== 'leon.tecnm.mx') {
+      return { ok: false, msg: 'Debes usar un correo @leon.tecnm.mx' };
+    }
+    const local = partes[0];
+
+    if (userType === 'student') {
+      // Sólo dígitos permitidos
+      if (!/^\d+$/.test(local)) {
+        return {
+          ok: false,
+          msg: 'En la sección Alumno sólo se permiten números (tu matrícula).'
+        };
+      }
+    } else {
+      // teacher/admin: No sólo dígitos (debe contener al menos una letra)
+      if (/^\d+$/.test(local)) {
+        return {
+          ok: false,
+          msg: 'En la sección Docente/Administrativo debes usar letras y/o caracteres (no sólo números).'
+        };
+      }
+    }
+
+    return { ok: true };
+  }
+
+  /*
+  // 3. Login con email y contraseña (form submit)
+  document.getElementById('login-form')
+    .addEventListener('submit', async function(e) {
+      e.preventDefault();
+      errorEl.textContent = '';
+
+      const email = this.email.value.trim();
+      const password = this.password.value;
+
+      const { ok, msg } = validarCorreo(email);
+      if (!ok) {
+        errorEl.textContent = msg;
+        return;
+      }
+
+      try {
+        // Firebase sign-in
+        const u = await firebase.auth().signInWithEmailAndPassword(email, password);
+        const token = await u.user.getIdToken();
+        window.location.href =
+          `usuario.html?type=${encodeURIComponent(userType)}&token=${token}`;
+      } catch (err) {
+        errorEl.textContent = err.message;
+      }
+    });
+
+  // 4. Registro de usuario
+  document.getElementById('register-btn')
+    .addEventListener('click', async () => {
+      errorEl.textContent = '';
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      const { ok, msg } = validarCorreo(email);
+      if (!ok) {
+        errorEl.textContent = msg;
+        return;
+      }
+      if (password.length < 6) {
+        errorEl.textContent = 'La contraseña debe tener al menos 6 caracteres';
+        return;
+      }
+
+      try {
+        const u = await firebase.auth().createUserWithEmailAndPassword(email, password);
+        const token = await u.user.getIdToken();
+        window.location.href =
+          `usuario.html?type=${encodeURIComponent(userType)}&token=${token}`;
+      } catch (err) {
+        errorEl.textContent = err.message;
+      }
+    });
+  */
+
+  // 5. Google Sign-In con restricción de formato
+  document.getElementById('google-login-btn')
+    .addEventListener('click', async (e) => {
+      e.preventDefault();
+      errorEl.textContent = '';
+
+      const provider = new firebase.auth.GoogleAuthProvider();
+      provider.setCustomParameters({
+        hd: 'leon.tecnm.mx',
+        prompt: 'select_account'
+      });
+
+      try {
+        const result = await firebase.auth().signInWithPopup(provider);
+        const user = result.user;
+
+        // 5.1 Verifica dominio
+        if (!user.email.endsWith('@leon.tecnm.mx')) {
+          errorEl.textContent = 'Solo correos institucionales @leon.tecnm.mx';
+          await firebase.auth().signOut();
+          return;
+        }
+
+        // 5.2 Aplica la misma validación de localpart según sección
+        const { ok, msg } = validarCorreo(user.email);
+        if (!ok) {
+          errorEl.textContent = msg;
+          await firebase.auth().signOut();
+          return;
+        }
+
+        // 5.3 Si todo bien, continúa
+        const token = await user.getIdToken();
+        window.location.href =
+          `usuario.html?type=${encodeURIComponent(userType)}&token=${token}`;
+
+      } catch (err) {
+        console.error(err);
+        errorEl.textContent = err.message;
+      }
+    });
+
+ 
+  // 6. Google Logout (igual que antes)
+  document.getElementById('google-logout-btn')
+    .addEventListener('click', async () => {
+      await firebase.auth().signOut();
+      window.open('https://accounts.google.com/Logout','_blank');
+      setTimeout(() => location.href = 'login.html', 400);
+    });
+  
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estacionamiento Campus I</title>
+    <link rel="stylesheet" href="../static/styles_principal.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="firebase-config.js"></script>
+</head>
+<body>
+
+  <div class="main-content">
+    <div class="left-panel">
+      <img src="../static/LOGO PRINCIPAL.png" alt="Logo Principal">
+    </div>
+
+    <div class="right-panel">
+      <div class="header">
+        <div class="header-title">
+          INSTITUTO TECNOLÓGICO<br>DE LEÓN
+        </div>
+        <img
+          src="../static/LOGO ITL-QR.png"
+          alt="Logo ITL QR"
+          onclick="location.href='principal.html'">
+      </div>
+
+      <div class="subtitle">ESTACIONAMIENTO CAMPUS I</div>
+
+      <div class="center-content">
+        <p>PORCENTAJE DE OCUPACIÓN ACTUAL</p>
+        <div class="percentage-box" id="capacity">80%</div>
+        <div id="alerta-estacionamiento" style="color: #b50000; font-weight: bold; margin: 10px 0; display: none;"></div>
+
+
+        <p>USUARIO</p>
+        <div class="button-list">
+          <button onclick="location.href='login.html?type=student'">
+            Alumno
+          </button>
+          <button onclick="location.href='login.html?type=teacher'">
+            Docente
+          </button>
+          <button onclick="location.href='login.html?type=admin'">
+            Personal Administrativo
+          </button>
+        </div>
+
+        <p>ACCESO</p>
+        <div class="button-list">
+          <button onclick="location.href='sesion_guardia.html'">
+            Personal de seguridad
+          </button>
+          <button onclick="location.href='sesion_administrador.html'">
+            Administrador
+          </button>
+        </div>
+
+        <p>CONTACTO</p>
+        <div class="button-list">
+          <button onclick="location.href='mailto:qrpassitl@gmail.com'">
+            qrpassitl@gmail.com
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <!-- Dirección centrada -->
+    <p style="text-align: center; margin: 0;">
+      DIRECCIÓN: Campus I - Av. Tecnológico s/n, Fraccionamiento Industrial Julián de Obregón, 37290 León, Gto.
+    </p>
+
+    <!-- Mapa centrado -->
+    <div style="display: flex; justify-content: center; margin: 10px 0;">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3722.083647090541!2d-101.63007312606348!3d21.10923108501237!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x842bbe6ffb373d7f%3A0x74d250726784c0f2!2sAparcamiento%2C%20Av.%20del%20Tecnol%C3%B3gico%2C%20Industrial%20Julian%20de%20Obregon%2C%2037290%20Le%C3%B3n%20de%20los%20Aldama%2C%20Gto.!5e0!3m2!1ses!2smx!4v1748191826134!5m2!1ses!2smx"
+        width="200"
+        height="200"
+        style="border: 0;"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+
+    <!-- Créditos con espacio encima -->
+    <div style="text-align: center; margin-top: 20px;">
+      © Copyright 2021 TecNM<br>
+      - Todos los Derechos Reservados (Toda la información protegida por ley)
+    </div>
+  </div>
+
+  <script>
+   async function updateCapacity() {
+  try {
+    const res = await fetch('http://127.0.0.1:5000/api/status');
+    if (!res.ok) throw new Error(res.status);
+    const data = await res.json();
+
+    // Mostrar porcentaje
+    const porcentaje = data.capacidad_total;
+    document.getElementById('capacity').innerText = `${porcentaje.toFixed(2)}%`;
+
+    // Mostrar/ocultar mensaje de alerta
+    const alerta = document.getElementById('alerta-estacionamiento');
+    if (porcentaje >= 90) {
+      alerta.innerText = "Aviso: El estacionamiento está casi lleno. Por favor, considere buscar un espacio disponible lo antes posible.";
+      alerta.style.display = 'block';
+    } else {
+      alerta.innerText = '';
+      alerta.style.display = 'none';
+    }
+  } catch (err) {
+    console.error('No se pudo obtener status de estacionamiento:', err);
+  }
+}
+
+
+    // Primera actualización al cargar...
+    updateCapacity();
+    // ...y luego cada 10 segundos
+    setInterval(updateCapacity, 10000);
+  </script>
+
+</body>
+</html>

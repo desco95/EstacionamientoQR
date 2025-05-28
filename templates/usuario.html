@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Usuario - Acceso Estacionamiento</title>
+  <link rel="stylesheet" href="../static/styles_usuario.css">
+  <!-- Firebase SDK (misma versión que en login) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="firebase-config.js"></script>
+  <script defer src="usuario.js"></script>
+</head>
+<body>
+  <div class="user-header">
+    <img src="../static/LOGO USUARIO.png" alt="Logo Usuario">
+    <img src="../static/LOGO ITL-QR1.png" alt="Logo ITL QR">
+  </div>
+
+  <div class="user-container">
+    <h1>BIENVENIDO</h1>
+    <div id="user-info">
+      <p>Cargando información del usuario...</p>
+    </div>
+
+    <div class="qr-section">
+      <h2>TU CÓDIGO QR DE ACCESO</h2>
+      <div id="qr-container">
+        <img id="qr-image" src="" alt="Código QR">
+        <p id="qr-expiration"></p>
+      </div>
+      <button id="download-qr" class="refresh-button" type="button">
+        Descargar QR
+      </button>
+    </div>
+
+    <!-- Ahora sí coinciden el id y el listener en usuario.js -->
+    <button id="logout-button" class="logout-button" type="button">
+      Cerrar Sesión
+    </button>
+  </div>
+</body>
+</html>

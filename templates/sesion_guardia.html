@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sesión Guardia</title>
+    <link rel="stylesheet" href="../static/styles_sesion_guardia.css">
+</head>
+<body>
+    <div class="guard-session-container">
+        <div class="logo-section">
+            <img src="../static/LOGO INICIO SESION.png" alt="Logo Inicio Sesión">
+        </div>
+
+        <div class="form-section">
+            <div class="header">
+                <div class="header-title">INSTITUTO TECNOLÓGICO<br>DE LEÓN</div>
+                <img src="../static/LOGO ITL.png" alt="Logo ITL" onclick="location.href='principal.html'">
+            </div>
+
+            <div class="subtitle">ESTACIONAMIENTO CAMPUS I</div>
+            <div class="admin-access">Acceso para personal de seguridad</div>
+
+            <form id="guard-login-form">
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Ingrese su nombre" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="turno">Turno</label>
+                    <select id="turno" name="turno" required>
+                        <option value="">Selecciona</option>
+                        <option value="Matutino">Matutino</option>
+                        <option value="Vespertino">Vespertino</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="contrasena">Contraseña</label>
+                    <input type="password" id="contrasena" name="contrasena" placeholder="Ingrese su contraseña" required>
+                </div>
+
+                <div class="button-row">
+                    <div></div>
+                    <div><button type="submit" class="enter-button">Entrar</button></div>
+                    <div><button type="button" class="back-button" onclick="location.href='principal.html'">Volver al inicio</button></div>
+                </div>
+            </form>
+            
+            <div id="error-message" class="error-message"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('guard-login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const nombre = document.getElementById('nombre').value;
+            const turno = document.getElementById('turno').value;
+            const contrasena = document.getElementById('contrasena').value;
+            const errorElement = document.getElementById('error-message');
+            
+            try {
+                // Asegúrate de que la URL sea la correcta
+                const response = await fetch('http://127.0.0.1:5000/api/guard/login', { // Cambié la URL aquí
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        guard_id: contrasena,  // Usando 'contrasena' como el ID del guardia
+                        name: nombre,
+                        shift: turno
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Guarda el ID del guardia en la sesión y redirige
+                    sessionStorage.setItem('guard_id', contrasena);
+                    window.location.href = 'guardia.html';
+                } else {
+                    errorElement.textContent = data.error || 'Error al iniciar sesión';
+                }
+            } catch (error) {
+                errorElement.textContent = 'Error de conexión con el servidor';
+            }
+        });
+    </script>
+</body>
+</html>

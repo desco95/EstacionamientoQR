@@ -1,0 +1,146 @@
+/* -------------------------------------------------------
+   RESET BÁSICO
+   ------------------------------------------------------- */
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+/* -------------------------------------------------------
+   1. Fondo blanco + franja azul al final del documento
+   ------------------------------------------------------- */
+body {
+    background-color: white;
+    position: relative;
+    min-height: 100vh;       /* garantiza que el body sea al menos la altura de la ventana */
+}
+
+body::after {
+    content: "";
+    position: absolute;     /* va con el flujo del documento */
+    left: 0;
+    bottom: 0;              /* al final del documento */
+    width: 100%;            /* sin espacio en los lados */
+    height: 30px;           /* ajusta la altura si lo deseas */
+    background-color: #041a75;
+    z-index: -1;            /* detrás del contenido */
+}
+
+/* -------------------------------------------------------
+   2. Header con logos pegados a los bordes
+   ------------------------------------------------------- */
+.user-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+    padding: 0;             /* elimina espacio arriba/abajo */
+    position: relative;
+    z-index: 1;
+}
+
+.user-header img {
+    display: block;
+    margin: 0;              /* sin márgenes en general */
+    padding: 0;
+    width: auto;
+}
+
+
+
+/* Logo ITL-QR con margen derecho */
+.user-header img:last-child {
+    margin-right: 20px;
+}
+
+/* -------------------------------------------------------
+   3. Tamaño responsive de los logos
+   ------------------------------------------------------- */
+@media (min-width: 769px) {
+    .user-header img {
+        height: 120px;      /* desktop */
+    }
+}
+
+@media (max-width: 768px) {
+    .user-header img {
+        height: 60px;       /* móvil/tablet */
+    }
+}
+
+/* -------------------------------------------------------
+   4. Resto de tu CSS ORIGINAL sin cambios
+   ------------------------------------------------------- */
+.user-container {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.user-container h1 {
+    font-size: 28px;
+    color: #011151;
+    margin-bottom: 20px;
+}
+
+#user-info {
+    margin-bottom: 30px;
+    padding: 15px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+}
+
+.qr-section {
+    margin: 30px 0;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+}
+
+.qr-section h2 {
+    font-size: 20px;
+    color: #011151;
+    margin-bottom: 15px;
+}
+
+#qr-container {
+    margin: 20px 0;
+}
+
+#qr-image {
+    width: 200px;
+    height: 200px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    background-color: white;
+}
+
+#qr-expiration {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #666;
+}
+
+.refresh-button {
+    padding: 10px 20px;
+    background-color: #011151;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.logout-button {
+    padding: 10px 20px;
+    background-color: #e20a19;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 30px;      /* separación sobre la franja azul */
+    margin-bottom: 50px;   /* espacio antes de la franja azul */
+}

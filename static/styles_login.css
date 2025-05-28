@@ -1,0 +1,202 @@
+/* Reset & Box Sizing */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body */
+body {
+  background-color: #041a75;
+  font-family: 'Helvetica World', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Contenedor: logo + caja de formulario */
+.login-session-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 900px;
+}
+
+/* Logo fuera del formulario */
+.logo-section {
+  flex-shrink: 0;
+  margin-right: 20px;
+}
+/* Logo fuera del formulario */
+.logo-section img {
+  max-width: 350px; /* antes era 200px, ahora lo hacemos más grande */
+  width: 100%;      /* para que escale correctamente */
+  height: auto;
+}
+
+
+/* Caja blanca con el formulario */
+.form-section {
+  background-color: #ffffff;
+  border-radius: 15px;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 300px;
+  max-width: 400px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Header dentro de la caja */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+.header-title {
+  font-size: 22px;
+  font-weight: bold;
+  line-height: 1.2;
+  white-space: pre-line;
+}
+.header img {
+  height: 80px;
+  cursor: pointer;
+}
+
+/* Subtítulo y tipo de sesión */
+.subtitle {
+  font-family: 'Arab Times', serif;
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+.admin-access {
+  font-family: 'Arab Times', serif;
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+/* Formulario */
+.form-group {
+  margin-bottom: 15px;
+}
+.form-group label {
+  display: block;
+  font-family: 'Arab Times', serif;
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: #041a75;
+}
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+/* Botones principales */
+.button-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+.enter-button {
+  flex: 1;
+  background-color: #011151;
+  color: #fff;
+}
+.back-button {
+  flex: 1;
+  background-color: #0a7f32;
+  color: #fff;
+}
+.enter-button,
+.back-button {
+  border: none;
+  padding: 12px;
+  border-radius: 5px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.enter-button:hover,
+.back-button:hover {
+  transform: scale(1.03);
+}
+
+/* Ingreso social */
+.social-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 15px;
+}
+.google-button,
+.logout-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  padding: 12px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.google-button {
+  background-color: #fff;
+  color: #444;
+  border: 1px solid #ccc;
+}
+.logout-button {
+  background-color: #e20a19;
+  color: #fff;
+}
+.google-button:hover,
+.logout-button:hover {
+  transform: scale(1.03);
+}
+
+/* Volver al inicio */
+.back-row {
+  margin-top: 15px;
+  text-align: center;
+}
+.back-row .back-button {
+  width: 100%;
+  background-color: #555;
+}
+
+/* Mensaje de error */
+.error-message {
+  color: #e20a19;
+  font-size: 13px;
+  margin-top: 10px;
+  text-align: center;
+}
+
+/* Responsive: apilar y ocultar logo */
+@media (max-width: 768px) {
+  .login-session-container {
+    flex-direction: column;
+  }
+  .logo-section {
+    display: none;
+  }
+  .form-section {
+    width: 90%;
+  }
+  .header-title { font-size: 20px; }
+  .header img   { height: 60px; }
+}
+
+
+.hidden-by-request {
+  display: none !important;
+}

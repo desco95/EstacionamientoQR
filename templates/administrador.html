@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de accesos</title>
+    <link rel="stylesheet" href="../static/styles_administrador.css">
+    <style>
+        .hidden { display: none; }
+        .success-message { color: green; margin-top: 8px; }
+        .error-message { color: red; margin-top: 8px; }
+    </style>
+    <!-- BLOQUEO INMEDIATO DE ACCESO -->
+    <script>
+        const adminRole = localStorage.getItem('admin_role');
+        const adminUsername = localStorage.getItem('admin_username');
+        if (!adminRole || !adminUsername) {
+            window.location.replace('sesion_administrador.html');
+            throw new Error('No hay sesión de administrador');
+        }
+    </script>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="header">
+            <div class="left-header">
+                <img src="../static/LOGO ADMIN.png" alt="Logo Admin">
+                <div class="title">Control de accesos</div>
+            </div>
+            <div class="right-header">
+                <img src="../static/LOGO ITL-QR1.png" alt="Logo ITL QR">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="year">Año:</label>
+            <select id="year">
+                <option value="">Selecciona</option>
+                <script>
+                    for (let i = 2025; i <= 2035; i++) {
+                        document.write(`<option value="${i}">${i}</option>`);
+                    }
+                </script>
+            </select>
+        </div>
+
+        <div class="group-box">
+            <div class="form-group">
+                <label for="month">Mes:</label>
+                <select id="month" disabled>
+                    <option value="">Selecciona</option>
+                    <option value="1">Enero</option>
+                    <option value="2">Febrero</option>
+                    <option value="3">Marzo</option>
+                    <option value="4">Abril</option>
+                    <option value="5">Mayo</option>
+                    <option value="6">Junio</option>
+                    <option value="7">Julio</option>
+                    <option value="8">Agosto</option>
+                    <option value="9">Septiembre</option>
+                    <option value="10">Octubre</option>
+                    <option value="11">Noviembre</option>
+                    <option value="12">Diciembre</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Ingresos totales del mes:</label>
+                <input type="text" id="monthly-income" disabled>
+            </div>
+        </div>
+
+        <div class="group-box">
+            <div class="form-group">
+                <label for="day">Día:</label>
+                <select id="day" disabled>
+                    <option value="">Selecciona</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Ingresos totales:</label>
+                <input type="text" id="daily-income" disabled>
+            </div>
+            <div class="form-group">
+                <label>Porcentaje de ocupación:</label>
+                <input type="text" id="occupation-percentage" disabled>
+            </div>
+        </div>
+
+        <!-- Sección avanzada SOLO para jefe -->
+        <div class="group-box hidden" id="change-password-section">
+            <h4>Cambiar contraseña del jefe de guardias</h4>
+            <form id="change-password-form">
+                <div class="form-group">
+                    <label for="admin-password">Tu contraseña actual:</label>
+                    <input type="password" id="admin-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-guardias-password">Nueva contraseña para jefe de guardias:</label>
+                    <input type="password" id="new-guardias-password" required>
+                </div>
+                <button type="submit">Cambiar contraseña</button>
+                <div id="password-message" class="success-message"></div>
+            </form>
+
+            <div class="group-box">
+                <button id="descargar-reporte" disabled>Descargar reporte mensual (CSV)</button>
+                <div style="overflow-x:auto; max-width:100%;">
+                    <table id="tabla-reporte" border="1" style="width:100%; margin-top:12px; display:none;">
+                        <thead id="tabla-reporte-head"></thead>
+                        <tbody id="tabla-reporte-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-container" style="margin-top: 32px; text-align: right;">
+            <button onclick="cerrarSesion()">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <script>
+        // Mostrar sección avanzada solo si el rol es jefe
+        if (adminRole === 'jefe') {
+            document.getElementById('change-password-section').classList.remove('hidden');
+        }
+
+        // ---- Funcionalidad de selects ----
+        document.getElementById('year').addEventListener('change', function () {
+            enableMonth();
+            loadFullMonthAccess();
+        });
+
+        document.getElementById('month').addEventListener('change', function () {
+            loadMonthlyReport();
+            enableDay();
+            loadFullMonthAccess();
+        });
+
+        document.getElementById('day').addEventListener('change', function () {
+            loadDailyReport();
+        });
+
+        function enableMonth() {
+            const year = document.getElementById('year').value;
+            const monthSelect = document.getElementById('month');
+            if (year) {
+                monthSelect.disabled = false;
+                document.getElementById('day').disabled = true;
+                document.getElementById('day').innerHTML = '<option value="">Selecciona</option>';
+                clearReports();
+            } else {
+                monthSelect.disabled = true;
+                document.getElementById('day').disabled = true;
+                clearReports();
+            }
+        }
+
+        function enableDay() {
+            const year = document.getElementById('year').value;
+            const month = document.getElementById('month').value;
+            const daySelect = document.getElementById('day');
+            if (year && month) {
+                daySelect.disabled = false;
+                const daysInMonth = new Date(year, month, 0).getDate();
+                daySelect.innerHTML = '<option value="">Selecciona</option>';
+                for (let d = 1; d <= daysInMonth; d++) {
+                    daySelect.innerHTML += `<option value="${d}">${d}</option>`;
+                }
+                clearDailyReport();
+            } else {
+                daySelect.disabled = true;
+                clearDailyReport();
+            }
+        }
+
+        async function loadMonthlyReport() {
+            const year = document.getElementById('year').value;
+            const month = document.getElementById('month').value;
+            const role = localStorage.getItem('admin_role') || '';
+            if (!year || !month) {
+                document.getElementById('monthly-income').value = '';
+                return;
+            }
+            try {
+                const response = await fetch(`http://127.0.0.1:5000/api/report/monthly?year=${year}&month=${month}&role=${role}`);
+                const data = await response.json();
+                if (response.ok) {
+                    document.getElementById('monthly-income').value = data.total_ingresos;
+                    enableDay();
+                } else {
+                    document.getElementById('monthly-income').value = 'N/A';
+                    throw new Error(data.error || 'Error al cargar reporte');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('monthly-income').value = 'Error';
+            }
+        }
+
+        async function loadDailyReport() {
+            const year = document.getElementById('year').value;
+            const month = document.getElementById('month').value;
+            const day = document.getElementById('day').value;
+            const role = localStorage.getItem('admin_role') || '';
+            if (!year || !month || !day) {
+                clearDailyReport();
+                return;
+            }
+            const date = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+            try {
+                const response = await fetch(`http://127.0.0.1:5000/api/report/daily?date=${date}&role=${role}`);
+                const data = await response.json();
+                if (response.ok) {
+                    document.getElementById('daily-income').value = data.espacios_ocupados;
+                    document.getElementById('occupation-percentage').value = `${data.porcentaje_ocupacion}%`;
+                } else {
+                    clearDailyReport();
+                    throw new Error(data.error || 'Error al cargar reporte diario');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                clearDailyReport();
+            }
+        }
+
+        function clearReports() {
+            document.getElementById('monthly-income').value = '';
+            clearDailyReport();
+        }
+
+        function clearDailyReport() {
+            document.getElementById('daily-income').value = '';
+            document.getElementById('occupation-percentage').value = '';
+        }
+
+        // Descargar accesos (solo jefe)
+        const btnDescargar = document.getElementById('descargar-reporte');
+        if (btnDescargar) {
+            btnDescargar.addEventListener('click', function () {
+                const datos = window.reporteMensualDatos || [];
+                if (!datos.length) return alert('No hay datos para descargar');
+                const headRow = Object.keys(datos[0]);
+                const csvRows = [
+                    headRow.join(','),
+                    ...datos.map(row => headRow.map(
+                        col => `"${(row[col] !== null ? String(row[col]).replace(/"/g, '""') : '')}"`
+                    ).join(','))
+                ];
+                const csv = csvRows.join('\n');
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = `reporte_mes_${new Date().getTime()}.csv`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+        }
+
+        async function loadFullMonthAccess() {
+            const year = document.getElementById('year').value;
+            const month = document.getElementById('month').value;
+            const role = localStorage.getItem('admin_role') || 'jefe';
+            const btnDescargar = document.getElementById('descargar-reporte');
+            if (!year || !month) {
+                document.getElementById('tabla-reporte').style.display = 'none';
+                btnDescargar.disabled = true;
+                return;
+            }
+            try {
+                const response = await fetch(`http://127.0.0.1:5000/api/report/full_month_access?year=${year}&month=${month}&role=${role}`);
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Error al cargar el reporte');
+                // Mostrar en tabla
+                if (data.length === 0) {
+                    document.getElementById('tabla-reporte').style.display = 'none';
+                    btnDescargar.disabled = true;
+                    return;
+                }
+                // Cabecera
+                const headRow = Object.keys(data[0]);
+                document.getElementById('tabla-reporte-head').innerHTML =
+                    '<tr>' + headRow.map(col => `<th>${col}</th>`).join('') + '</tr>';
+                // Filas
+                document.getElementById('tabla-reporte-body').innerHTML = data.map(row => {
+                    return '<tr>' + headRow.map(col =>
+                        `<td>${row[col] !== null ? row[col] : ''}</td>`
+                    ).join('') + '</tr>';
+                }).join('');
+                document.getElementById('tabla-reporte').style.display = '';
+                btnDescargar.disabled = false;
+                // Guarda el JSON global para descargar
+                window.reporteMensualDatos = data;
+            } catch (error) {
+                document.getElementById('tabla-reporte').style.display = 'none';
+                btnDescargar.disabled = true;
+                alert('Error al cargar reporte mensual: ' + error.message);
+            }
+        }
+
+        // Cambiar contraseña (solo jefe)
+        document.getElementById('change-password-form')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const admin_username = localStorage.getItem('admin_username');
+            const admin_password = document.getElementById('admin-password').value;
+            const new_password = document.getElementById('new-guardias-password').value;
+            const msg = document.getElementById('password-message');
+            msg.textContent = '';
+            msg.className = '';
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/admin/change_guardias_password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        admin_username,
+                        admin_password,
+                        new_password
+                    })
+                });
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    msg.textContent = '¡Contraseña cambiada correctamente!';
+                    msg.className = 'success-message';
+                    document.getElementById('change-password-form').reset();
+                } else {
+                    msg.textContent = data.error || 'Error al cambiar contraseña';
+                    msg.className = 'error-message';
+                }
+            } catch (err) {
+                msg.textContent = 'Error de conexión con el servidor';
+                msg.className = 'error-message';
+            }
+        });
+
+        // Cerrar sesión (botón Volver a inicio)
+        function cerrarSesion() {
+            localStorage.removeItem('admin_role');
+            localStorage.removeItem('admin_username');
+            window.location.href = 'principal.html';
+        }
+
+        // Utilidades para CSV si las quieres usar en el futuro
+        function convertToCSV(arr) {
+            if (!arr || arr.length === 0) return '';
+            const headers = Object.keys(arr[0]).join(',');
+            const rows = arr.map(obj => Object.values(obj).map(val => `"${val ?? ''}"`).join(','));
+            return [headers, ...rows].join('\r\n');
+        }
+    </script>
+</body>
+</html>

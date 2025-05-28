@@ -1,0 +1,164 @@
+/* styles1.css */
+
+/* Reset and box sizing */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body background and font */
+body {
+  background-color: #041a75;
+  font-family: 'Helvetica World', sans-serif;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Main container for admin session page */
+.admin-session-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 15px;
+}
+
+/* Logo section */
+.logo-section {
+  flex-shrink: 0;
+}
+.logo-section img {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+}
+
+/* Form section */
+.form-section {
+  background-color: #ffffff;
+  border-radius: 15px;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 300px;
+  max-width: 500px;
+  margin-left: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Header inside form */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+.header-title {
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1.2;
+  white-space: pre-line;
+}
+.header img {
+  height: 80px;
+  cursor: pointer;
+}
+
+/* Subtitle and access notice */
+.subtitle {
+  font-family: 'Arab Times', serif;
+  font-size: 18px;
+  margin-bottom: 5px;
+  text-align: left;
+}
+.admin-access {
+  font-family: 'Arab Times', serif;
+  font-size: 16px;
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+/* Form groups */
+.form-group {
+  margin-bottom: 15px;
+}
+.form-group label {
+  display: block;
+  font-family: 'Arab Times', serif;
+  font-size: 14px;
+  margin-bottom: 5px;
+  text-align: left;
+}
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+/* Error message */
+.error-message {
+  color: #e20a19;
+  font-size: 14px;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}
+
+/* Button row */
+.button-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.button-row div {
+  flex: 1;
+}
+.button-row button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  color: #ffffff;
+  cursor: pointer;
+}
+.enter-button {
+  background-color: #011151;
+  margin-right: 5px;
+}
+.back-button {
+  background-color: #e20a19;
+  margin-left: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .admin-session-container {
+    flex-direction: column;
+  }
+  /* Oculta el logo en móviles */
+  .logo-section img {
+    display: none;
+  }
+  .form-section {
+    width: 90%;
+    margin-left: 0;
+  }
+  .header-title {
+    font-size: 20px;
+  }
+  .header img {
+    height: 60px;
+  }
+  .form-group input,
+  .button-row button {
+    font-size: 13px;
+  }
+}
