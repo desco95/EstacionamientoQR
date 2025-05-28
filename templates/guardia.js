@@ -3,7 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const guardId = sessionStorage.getItem('guard_id');
   if (!guardId) {
-    window.location.href = 'sesion_guardia.html';
+    window.location.href = '/sesion_guardia';
     return;
   }
 
