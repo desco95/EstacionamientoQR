@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Iniciar Sesión</title>
-  <link rel="stylesheet" href="../static/styles_login.css">
+  <link rel="stylesheet" href="/static/styles_login.css">
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
@@ -14,7 +14,7 @@
   <div class="login-session-container">
     <!-- Logo fuera del formulario -->
     <div class="logo-section">
-      <img src="../static/LOGO INICIO SESION.png" alt="Logo Inicio Sesión">
+      <img src="/static/LOGO INICIO SESION.png" alt="Logo Inicio Sesión">
     </div>
 
     <!-- Caja blanca con el formulario -->
@@ -24,9 +24,9 @@
           INSTITUTO TECNOLÓGICO<br>DE LEÓN
         </div>
         <img
-          src="../static/LOGO ITL.png"
+          src="/static/LOGO ITL.png"
           alt="Logo ITL"
-          onclick="location.href='principal.html'">
+          onclick="location.href='/'">
       </div>
 
       <div class="subtitle">ESTACIONAMIENTO CAMPUS I</div>
@@ -85,7 +85,7 @@
         <button
           type="button"
           class="back-button"
-          onclick="location.href='principal.html'">
+          onclick="location.href='/'">
           Volver al inicio
         </button>
       </div>
@@ -99,7 +99,7 @@
   (function() {
     const params = new URLSearchParams(window.location.search);
     if (!params.get('type')) {
-      window.location.href = 'principal.html';
+      window.location.href = '/';
     }
   })();
 
@@ -235,7 +235,7 @@
         // 5.3 Si todo bien, continúa
         const token = await user.getIdToken();
         window.location.href =
-          `usuario.html?type=${encodeURIComponent(userType)}&token=${token}`;
+          `/usuario?type=${encodeURIComponent(userType)}&token=${token}`;
 
       } catch (err) {
         console.error(err);
@@ -249,7 +249,7 @@
     .addEventListener('click', async () => {
       await firebase.auth().signOut();
       window.open('https://accounts.google.com/Logout','_blank');
-      setTimeout(() => location.href = 'login.html', 400);
+      setTimeout(() => location.href = '/login', 400);
     });
   
 </script>
