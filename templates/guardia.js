@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
     statusEl.style.background = '#ffcc00';
 
     try {
-      const resVal = await fetch('http://127.0.0.1:5000/api/validate_qr', {
+      const resVal = await fetch('/api/validate_qr', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ qr_id: code.data, guard_id: guardId })
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
       statusEl.textContent = isEntry ? 'APROBADO' : 'VUELVA PRONTO';
       statusEl.style.background = isEntry ? '#00bf63' : '#007acc';
 
-      await fetch(`http://127.0.0.1:5000${endpoint}`, {
+      await fetch(`${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ qr_id: code.data, guard_id: guardId })
@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     try {
-      const res = await fetch('http://127.0.0.1:5000/api/register/visitor', {
+      const res = await fetch('/api/register/visitor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, reason, plate, guard_id: guardId })
@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     try {
-      const res = await fetch('http://127.0.0.1:5000/api/visitor/exit', {
+      const res = await fetch('/api/visitor/exit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ visitor_id, plate, guard_id: guardId })
@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Tabla de visitantes del día ---
   async function loadVisitorTable() {
-    const res = await fetch('http://127.0.0.1:5000/api/visitor/today');
+    const res = await fetch('/api/visitor/today');
     const data = await res.json();
     const tbody = document.getElementById('visitor-table').querySelector('tbody');
     tbody.innerHTML = '';
