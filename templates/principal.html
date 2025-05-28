@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estacionamiento Campus I</title>
-    <link rel="stylesheet" href="../static/styles_principal.css">
+    <link rel="stylesheet" href="/static/styles_principal.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="firebase-config.js"></script>
@@ -13,7 +13,7 @@
 
   <div class="main-content">
     <div class="left-panel">
-      <img src="../static/LOGO PRINCIPAL.png" alt="Logo Principal">
+      <img src="/static/LOGO PRINCIPAL.png" alt="Logo Principal">
     </div>
 
     <div class="right-panel">
@@ -22,9 +22,9 @@
           INSTITUTO TECNOLÓGICO<br>DE LEÓN
         </div>
         <img
-          src="../static/LOGO ITL-QR.png"
+          src="/static/LOGO ITL-QR.png"
           alt="Logo ITL QR"
-          onclick="location.href='principal.html'">
+          onclick="location.href='/'">
       </div>
 
       <div class="subtitle">ESTACIONAMIENTO CAMPUS I</div>
@@ -37,23 +37,23 @@
 
         <p>USUARIO</p>
         <div class="button-list">
-          <button onclick="location.href='login.html?type=student'">
+          <button onclick="location.href='login?type=student'">
             Alumno
           </button>
-          <button onclick="location.href='login.html?type=teacher'">
+          <button onclick="location.href='login?type=teacher'">
             Docente
           </button>
-          <button onclick="location.href='login.html?type=admin'">
+          <button onclick="location.href='login?type=admin'">
             Personal Administrativo
           </button>
         </div>
 
         <p>ACCESO</p>
         <div class="button-list">
-          <button onclick="location.href='sesion_guardia.html'">
+          <button onclick="location.href='/sesion_guardia'">
             Personal de seguridad
           </button>
-          <button onclick="location.href='sesion_administrador.html'">
+          <button onclick="location.href='/sesion_administrador'">
             Administrador
           </button>
         </div>
@@ -98,7 +98,7 @@
   <script>
    async function updateCapacity() {
   try {
-    const res = await fetch('http://127.0.0.1:5000/api/status');
+    const res = await fetch('/api/status');
     if (!res.ok) throw new Error(res.status);
     const data = await res.json();
 
