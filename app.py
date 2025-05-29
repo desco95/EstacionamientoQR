@@ -721,9 +721,7 @@ def get_full_month_access():
         columns = [desc[0] for desc in cur.description]
 
         def serialize(obj):
-            if isinstance(obj, (datetime, date, time)):
-                return obj.isoformat()
-            return obj
+            return str(obj) if obj is not None else None
 
         result = []
         for row in rows:
@@ -733,6 +731,7 @@ def get_full_month_access():
             result.append(row_dict)
 
         return jsonify(result)
+
 
     except Exception as e:
         print("ERROR EN full_month_access:", str(e))
