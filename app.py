@@ -268,16 +268,16 @@ def record_access():
         guard_id = request.json.get('guard_id')
         if not qr_id or not guard_id:
             return jsonify({'error': 'Faltan QR o guardia'}), 400
-        
-        # 0) Cerrar accesos abiertos de días anteriores (antes de registrar el acceso de hoy)
+
+        # 0) Cerrar accesos abiertos de días anteriores
         cur.execute("""
-        UPDATE acceso
-        SET hora_salida = time '23:59'
-        WHERE fecha < CURRENT_DATE
-        AND hora_salida IS NULL
+            UPDATE acceso
+               SET hora_salida = time '23:59'
+             WHERE fecha < CURRENT_DATE
+               AND hora_salida IS NULL
         """)
 
-        # 1) Cierro acceso previo abierto de este QR, si lo hay
+        # 1) Cerrar acceso abierto hoy (si lo hay)
         cur.execute("""
             UPDATE acceso
                SET hora_salida = CURRENT_TIME
@@ -286,7 +286,7 @@ def record_access():
                AND hora_salida IS NULL
         """, (qr_id,))
 
-        # 2) Inserto nuevo acceso
+        # 2) Insertar nuevo acceso
         cur.execute("""
             INSERT INTO acceso (fecha, hora_entrada, id_guardia, id_qr)
             VALUES (CURRENT_DATE, CURRENT_TIME, %s, %s)
@@ -294,17 +294,27 @@ def record_access():
         """, (guard_id, qr_id))
         new_id = cur.fetchone()[0]
 
-        # 3) Actualizo estacionamiento (igual que antes)…
+        # 3) Actualizar o insertar en estacionamiento (mismo patrón que register_visitor)
         cur.execute("""
-            UPDATE estacionamiento
-               SET espacios_disponibles = espacios_disponibles - 1,
-                   espacios_ocupados   = espacios_ocupados + 1,
-                   capacidad_total     = 100 - ((espacios_disponibles - 1) * 100.0/2000)
+            SELECT espacios_disponibles, espacios_ocupados
+              FROM estacionamiento
              WHERE fecha = CURRENT_DATE
         """)
-        if cur.rowcount == 0:
-            # inserto el primer registro del día si no existía
-            espacios_disp = 2000 - 1
+        row = cur.fetchone()
+
+        if row:
+            espacios_disp = row[0] - 1
+            espacios_occ  = row[1] + 1
+            capacidad     = 100 - (espacios_disp * 100.0 / 2000)
+            cur.execute("""
+                UPDATE estacionamiento
+                   SET espacios_disponibles = %s,
+                       espacios_ocupados   = %s,
+                       capacidad_total     = %s
+                 WHERE fecha = CURRENT_DATE
+            """, (espacios_disp, espacios_occ, capacidad))
+        else:
+            espacios_disp = 1999
             espacios_occ  = 1
             capacidad     = 100 - (espacios_disp * 100.0 / 2000)
             cur.execute("""
@@ -321,6 +331,7 @@ def record_access():
     finally:
         cur.close()
         conn.close()
+
 
 
 @app.route('/api/record_exit', methods=['POST'])
@@ -379,73 +390,77 @@ def register_visitor():
 
     conn = get_db_connection()
     cur = conn.cursor()
-    
+
     try:
-    # Generar ID de visitante
+        # Generar ID de visitante
         cur.execute("SELECT MAX(SUBSTRING(id_visitante FROM 2)::integer) FROM visitante")
         max_id = cur.fetchone()[0] or 0
         visitor_id = f"V{str(max_id + 1).zfill(5)}"
 
-    # Cerrar accesos abiertos de días anteriores
+        # Cerrar accesos abiertos de días anteriores
         cur.execute("""
             UPDATE acceso
-            SET hora_salida = time '23:59'
-            WHERE fecha < CURRENT_DATE
-           AND hora_salida IS NULL
+               SET hora_salida = time '23:59'
+             WHERE fecha < CURRENT_DATE
+               AND hora_salida IS NULL
         """)
 
-    # Insertar visitante
-    cur.execute(""" 
-        INSERT INTO visitante (id_visitante, nombre, motivo, placa, id_guardia)
-        VALUES (%s, %s, %s, %s, %s)
-    """, (visitor_id, name, reason, plate, guard_id))
+        # Insertar visitante
+        cur.execute(""" 
+            INSERT INTO visitante (id_visitante, nombre, motivo, placa, id_guardia)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (visitor_id, name, reason, plate, guard_id))
 
-    # Registrar acceso
-    cur.execute(""" 
-        INSERT INTO acceso (fecha, id_guardia, id_visitante, hora_entrada)
-        VALUES (CURRENT_DATE, %s, %s, CURRENT_TIME)
-        RETURNING id_acceso
-    """, (guard_id, visitor_id))
-    new_id = cur.fetchone()[0]
+        # Registrar acceso
+        cur.execute(""" 
+            INSERT INTO acceso (fecha, id_guardia, id_visitante, hora_entrada)
+            VALUES (CURRENT_DATE, %s, %s, CURRENT_TIME)
+            RETURNING id_acceso
+        """, (guard_id, visitor_id))
+        new_id = cur.fetchone()[0]
 
-    # Actualizar o insertar en estacionamiento
-    cur.execute("""
-        SELECT espacios_disponibles, espacios_ocupados
-        FROM estacionamiento
-        WHERE fecha = CURRENT_DATE
-    """)
-    row = cur.fetchone()
-
-    if row:
-        espacios_disp = row[0] - 1
-        espacios_occ  = row[1] + 1
-        capacidad     = 100 - (espacios_disp * 100.0 / 2000)
+        # Actualizar o insertar en estacionamiento
         cur.execute("""
-            UPDATE estacionamiento
-               SET espacios_disponibles = %s,
-                   espacios_ocupados   = %s,
-                   capacidad_total     = %s
+            SELECT espacios_disponibles, espacios_ocupados
+              FROM estacionamiento
              WHERE fecha = CURRENT_DATE
-        """, (espacios_disp, espacios_occ, capacidad))
-    else:
-        espacios_disp = 1999
-        espacios_occ  = 1
-        capacidad     = 100 - (espacios_disp * 100.0 / 2000)
-        cur.execute("""
-            INSERT INTO estacionamiento (fecha, capacidad_total, espacios_disponibles, espacios_ocupados)
-            VALUES (CURRENT_DATE, %s, %s, %s)
-        """, (capacidad, espacios_disp, espacios_occ))
+        """)
+        row = cur.fetchone()
 
+        if row:
+            espacios_disp = row[0] - 1
+            espacios_occ = row[1] + 1
+            capacidad = 100 - (espacios_disp * 100.0 / 2000)
+            cur.execute("""
+                UPDATE estacionamiento
+                   SET espacios_disponibles = %s,
+                       espacios_ocupados = %s,
+                       capacidad_total = %s
+                 WHERE fecha = CURRENT_DATE
+            """, (espacios_disp, espacios_occ, capacidad))
+        else:
+            espacios_disp = 1999
+            espacios_occ = 1
+            capacidad = 100 - (espacios_disp * 100.0 / 2000)
+            cur.execute("""
+                INSERT INTO estacionamiento (fecha, capacidad_total, espacios_disponibles, espacios_ocupados)
+                VALUES (CURRENT_DATE, %s, %s, %s)
+            """, (capacidad, espacios_disp, espacios_occ))
+
+        # Confirmar todos los cambios
         conn.commit()
+
         return jsonify({'success': True, 'visitor_id': visitor_id, 'id_acceso': new_id})
 
     except Exception as e:
         conn.rollback()
         print('ERROR EN REGISTER VISITOR:', str(e))
         return jsonify({'error': str(e)}), 500
+
     finally:
         cur.close()
         conn.close()
+
 
 @app.route('/api/visitor/exit', methods=['POST'])
 def visitor_exit():
