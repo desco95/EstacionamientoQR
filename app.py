@@ -23,9 +23,9 @@ load_dotenv()
 
 os.environ['TZ'] = 'America/Mexico_City'
 time.tzset()
-mx_time = datetime.now(timezone('America/Mexico_City'))
-fecha = mx_time.date()
-hora = mx_time.time()
+#mx_time = datetime.now(timezone('America/Mexico_City'))
+#fecha = mx_time.date()
+#hora = mx_time.time()
 
 
 # Firebase configuration
