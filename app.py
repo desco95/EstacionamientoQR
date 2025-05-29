@@ -14,7 +14,7 @@ from datetime import date, time, datetime
 from datetime import datetime, timedelta
 from flask import render_template
 import time
-from pytz import timezone
+# from pytz import timezone
 
 app = Flask(__name__)
 CORS(app)
