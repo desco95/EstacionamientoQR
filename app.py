@@ -13,11 +13,15 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import date, time, datetime
 from datetime import datetime, timedelta
 from flask import render_template
+import time
 
 app = Flask(__name__)
 CORS(app)
 
 load_dotenv()
+
+os.environ['TZ'] = 'America/Mexico_City'
+time.tzset()
 
 # Firebase configuration
 cred = credentials.Certificate("firebase-service-account.json")
