@@ -14,6 +14,7 @@ from datetime import date, time, datetime
 from datetime import datetime, timedelta
 from flask import render_template
 import time
+from pytz import timezone
 
 app = Flask(__name__)
 CORS(app)
@@ -22,6 +23,10 @@ load_dotenv()
 
 os.environ['TZ'] = 'America/Mexico_City'
 time.tzset()
+mx_time = datetime.now(timezone('America/Mexico_City'))
+fecha = mx_time.date()
+hora = mx_time.time()
+
 
 # Firebase configuration
 cred = credentials.Certificate("firebase-service-account.json")
@@ -686,13 +691,13 @@ def get_full_month_access():
     year = int(request.args.get('year'))
     month = int(request.args.get('month'))
     role = request.args.get('role', '')
+
     if role != 'jefe':
         return jsonify({'error': 'No autorizado'}), 403
 
     conn = get_db_connection()
     cur = conn.cursor()
     try:
-        # Busca todos los accesos del mes, con datos relacionados (usuario, visitante, guardia)
         cur.execute("""
             SELECT 
                 a.*, 
@@ -707,7 +712,8 @@ def get_full_month_access():
             LEFT JOIN usuario u ON q.id_usuario = u.id_usuario
             LEFT JOIN visitante v ON a.id_visitante = v.id_visitante
             LEFT JOIN guardia g ON a.id_guardia = g.id_guardia
-            WHERE EXTRACT(YEAR FROM a.fecha) = %s AND EXTRACT(MONTH FROM a.fecha) = %s
+            WHERE DATE_PART('year', a.fecha) = %s
+              AND DATE_PART('month', a.fecha) = %s
             ORDER BY a.fecha, a.hora_entrada
         """, (year, month))
 
@@ -725,10 +731,16 @@ def get_full_month_access():
             for k, v in zip(columns, row):
                 row_dict[k] = serialize(v)
             result.append(row_dict)
+
         return jsonify(result)
+
+    except Exception as e:
+        print("ERROR EN full_month_access:", str(e))
+        return jsonify({'error': str(e)}), 500
     finally:
         cur.close()
         conn.close()
+
 
 
 scheduler = BackgroundScheduler(timezone='America/Mexico_City')
